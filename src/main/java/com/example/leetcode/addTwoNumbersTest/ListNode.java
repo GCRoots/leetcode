@@ -1,4 +1,4 @@
-package com.example.leetcode.april2019.addTwoNumbersTest;
+package com.example.leetcode.addTwoNumbersTest;
 
 public class ListNode {
     int val;
@@ -8,7 +8,7 @@ public class ListNode {
 //        this.next = next;
 //    }
 
-    public ListNode(int x){
-        val=x;
+    public ListNode(int x) {
+        val = x;
     }
 }
