@@ -1,7 +1,6 @@
 package BinaryTreeDemo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author shipengfei
@@ -25,6 +24,8 @@ public class Solution {
         System.out.println(list);
         list=solution.postorderTraversal(root);
         System.out.println(list);
+        List<List<Integer>> lists=solution.levelOrder(root);
+        System.out.println(lists);
 
     }
 
@@ -78,7 +79,25 @@ public class Solution {
         List<List<Integer>> lists=new ArrayList<>();
 
 
+        if (root!=null){
+            Queue<TreeNode> queue=new LinkedList<>();
+            queue.add(root);
 
+            while (!queue.isEmpty()){
+                List<Integer> list=new ArrayList<>();
+                int num=queue.size();
+                for (int i=0;i<num;i++){
+                    TreeNode now=queue.poll();
+                    list.add(now.val);
+
+                    if (now.left!=null)
+                        queue.add(now.left);
+                    if (now.right!=null)
+                        queue.add(now.right);
+                }
+                lists.add(list);
+            }
+        }
         return lists;
     }
 
