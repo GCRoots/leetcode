@@ -1,4 +1,4 @@
-package com.example.leetcode.findMedianSortedArrays;
+package findMedianSortedArrays;
 
 import java.util.*;
 
