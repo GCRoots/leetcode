@@ -1,4 +1,4 @@
-package com.example.leetcode.addTwoNumbersTest;
+package addTwoNumbersTest;
 
 import java.util.Scanner;
 

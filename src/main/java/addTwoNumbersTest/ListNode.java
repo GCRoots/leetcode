@@ -1,4 +1,4 @@
-package com.example.leetcode.addTwoNumbersTest;
+package addTwoNumbersTest;
 
 public class ListNode {
     int val;
