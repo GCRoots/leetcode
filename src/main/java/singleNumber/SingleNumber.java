@@ -1,4 +1,4 @@
-package com.example.leetcode.singleNumber;
+package singleNumber;
 
 import java.util.HashMap;
 import java.util.HashSet;
