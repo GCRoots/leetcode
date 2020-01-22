@@ -3,6 +3,7 @@ package BinaryTreeDemo;
 import sun.nio.cs.ext.MacArabic;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author shipengfei
@@ -40,6 +41,28 @@ public class Solution {
         System.out.println(isSymmetric);
         boolean hasPathSum=solution.hasPathSum(root,8);
         System.out.println(hasPathSum);
+
+        List<Integer> l=new ArrayList<>();
+        l.add(1);
+        l.add(3);
+        l.add(5);
+        l.add(4);
+        System.out.println(l);
+        System.out.println(l.indexOf(5));
+        System.out.println(l.subList(0,2));
+        System.out.println(l.subList(1,3));
+
+        int[] pre={3,9,20,15,7};
+        int[] in={9,3,15,20,7};
+        int[] post={9,15,7,20,3};
+        TreeNode node=solution.buildTree(in,post);
+        System.out.println(solution.inorderTraversal(node));
+        System.out.println(solution.postorderTraversal(node));
+        TreeNode node1=solution.buildTree1(pre,in);
+        System.out.println(solution.preorderTraversal(node1));
+        System.out.println(solution.inorderTraversal(node1));
+
+
 
     }
 
@@ -228,5 +251,88 @@ public class Solution {
         return hasPathSum(root.left,sum)||hasPathSum(root.right,sum);
     }
 
+    /**
+     * 从中序与后序遍历序列构造二叉树
+     *
+     * @param inorder 中序遍历
+     * @param postorder 后序遍历
+     * @return
+     */
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+
+        TreeNode node=null;
+
+        if (postorder.length>0){
+            int last=postorder.length-1;
+            node=new TreeNode(postorder[last]);
+
+            List<Integer> in =Arrays.stream(inorder).boxed().collect(Collectors.toList());
+            List<Integer> post =Arrays.stream(postorder).boxed().collect(Collectors.toList());
+
+            int innode=in.indexOf(postorder[last]);
+            node.left=build(in.subList(0,innode),post.subList(0,innode));
+            node.right=build(in.subList(innode+1,last+1),post.subList(innode,last));
+        }
+
+        return node;
+    }
+
+    private TreeNode build(List<Integer> inorder, List<Integer> postorder){
+
+
+        TreeNode node=null;
+
+        if (postorder.size()>0){
+            int last=postorder.size()-1;
+            node=new TreeNode(postorder.get(last));
+
+            int innode=inorder.indexOf(postorder.get(last));
+            node.left=build(inorder.subList(0,innode),postorder.subList(0,innode));
+            node.right=build(inorder.subList(innode+1,last+1),postorder.subList(innode,last));
+        }
+
+        return node;
+    }
+
+    /**
+     * 从前序与中序遍历序列构造二叉树
+     *
+     * @param preorder 前序遍历
+     * @param inorder 中序遍历
+     * @return
+     */
+    public TreeNode buildTree1(int[] preorder, int[] inorder) {
+        TreeNode node=null;
+
+        if (preorder.length>0){
+            int last=preorder.length-1;
+            node=new TreeNode(preorder[0]);
+
+            List<Integer> pre =Arrays.stream(preorder).boxed().collect(Collectors.toList());
+            List<Integer> in =Arrays.stream(inorder).boxed().collect(Collectors.toList());
+
+
+            int innode=in.indexOf(preorder[0]);
+            node.left=build1(pre.subList(1,innode+1),in.subList(0,innode));
+            node.right=build1(pre.subList(innode+1,last+1),in.subList(innode+1,last+1));
+        }
+
+        return node;
+    }
+
+    private TreeNode build1(List<Integer> preorder, List<Integer> inorder){
+        TreeNode node=null;
+
+        if (preorder.size()>0){
+            int last=preorder.size()-1;
+            node=new TreeNode(preorder.get(0));
+
+            int innode=inorder.indexOf(preorder.get(0));
+            node.left=build1(preorder.subList(1,innode+1),inorder.subList(0,innode));
+            node.right=build1(preorder.subList(innode+1,last+1),inorder.subList(innode+1,last+1));
+        }
+
+        return node;
+    }
 
 }
