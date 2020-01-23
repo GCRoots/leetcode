@@ -63,6 +63,16 @@ public class Solution {
         System.out.println(solution.inorderTraversal(node1));
 
 
+        Node root1=new Node(1);
+        root1.left=new Node(2);
+        root1.right=new Node(3);
+        root1.left.left=new Node(4);
+        root1.left.right=new Node(5);
+        root1.right.left=new Node(6);
+        root1.right.right=new Node(7);
+        solution.connect1(root1);
+
+
 
     }
 
@@ -114,7 +124,6 @@ public class Solution {
     //层次遍历 ---- 非递归
     public List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> lists=new ArrayList<>();
-
 
         if (root!=null){
             Queue<TreeNode> queue=new LinkedList<>();
@@ -333,6 +342,57 @@ public class Solution {
         }
 
         return node;
+    }
+
+    //填充每个节点的下一个右侧节点指针 迭代 通用
+    public Node connect(Node root) {
+        if (root==null)
+            return null;
+
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int size=queue.size();
+
+            Node now=queue.poll();
+            for (int i = 0; i < size; i++){
+
+                if (now.left!=null)
+                    queue.add(now.left);
+                if (now.right!=null)
+                    queue.add(now.right);
+
+                if (i==size-1)
+                    break;
+
+                Node node=queue.poll();
+                now.next=node;
+                now=node;
+            }
+        }
+
+        return root;
+    }
+
+    //填充每个节点的下一个右侧节点指针 拉链法 完美二叉树
+    public Node connect1(Node root){
+        if (root==null)
+            return root;
+
+        Node left=root.left;
+        Node right=root.right;
+
+        while (left!=null){
+            left.next=right;
+            left=left.right;
+            right=right.left;
+        }
+
+        connect1(root.left);
+        connect1(root.right);
+
+        return root;
     }
 
 }
