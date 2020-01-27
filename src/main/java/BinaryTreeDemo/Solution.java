@@ -399,7 +399,7 @@ public class Solution {
     }
 
     /**
-     * 二叉树的最近公共祖先
+     * 二叉树的最近公共祖先 Lowest
      * 最low的自己实现的版本，low到爆
      *
      * @param root 根节点
@@ -439,7 +439,6 @@ public class Solution {
 
         return null;
     }
-
     private List<TreeNode> inorderTraversal1(TreeNode root) {
         List<TreeNode> list=new ArrayList<>();
 
@@ -456,6 +455,29 @@ public class Solution {
 
     /**
      * 二叉树的最近公共祖先
+     *
+     * @param root 根节点
+     * @param p 目标节点 p
+     * @param q 目标节点 q
+     * @return
+     */
+    TreeNode res=null;
+    public TreeNode lowestCommonAncestor1(TreeNode root, TreeNode p, TreeNode q) {
+        func(root,p,q);
+        return res;
+    }
+    private boolean func(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null) return false;
+        int left=func(root.left,p,q)?1:0;
+        int right=func(root.right,p,q)?1:0;
+        int mid=(root==p || root==q)?1:0;
+        if(left+right+mid>=2) res=root;
+        if(left+right+mid>0) return true;
+        else return false;
+    }
+
+    /**
+     * 二叉树的最近公共祖先 Best
      * Best版本(leetcode)
      *
      * @param root 根节点
@@ -463,7 +485,7 @@ public class Solution {
      * @param q 目标节点 q
      * @return
      */
-    public TreeNode lowestCommonAncestor1(TreeNode root, TreeNode p, TreeNode q) {
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
         if (root == null || root == p || root == q){
             return root;
         }
