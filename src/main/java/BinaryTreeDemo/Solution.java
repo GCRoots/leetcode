@@ -13,11 +13,11 @@ public class Solution {
     public static void main(String[] args) {
         TreeNode root=new TreeNode(1);
         root.left=new TreeNode(2);
-        root.right=new TreeNode(2);
-        root.left.left=new TreeNode(3);
-        root.left.right=new TreeNode(4);
-        root.right.left=new TreeNode(4);
-        root.right.right=new TreeNode(3);
+        root.right=new TreeNode(3);
+        root.left.left=new TreeNode(4);
+        root.left.right=new TreeNode(5);
+        root.right.left=new TreeNode(6);
+        root.right.right=new TreeNode(7);
 
         Solution solution=new Solution();
         List<Integer> list;
@@ -71,6 +71,9 @@ public class Solution {
         root1.right.left=new Node(6);
         root1.right.right=new Node(7);
         solution.connect1(root1);
+
+        TreeNode a=solution.lowestCommonAncestor(root,root.left,root.left.right);
+        System.out.println(a.val);
 
 
 
@@ -393,6 +396,83 @@ public class Solution {
         connect1(root.right);
 
         return root;
+    }
+
+    /**
+     * 二叉树的最近公共祖先
+     * 最low的自己实现的版本，low到爆
+     *
+     * @param root 根节点
+     * @param p 目标节点 p
+     * @param q 目标节点 q
+     * @return
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root==null)
+            return null;
+
+        List<TreeNode> list=inorderTraversal1(root);
+
+        int indexroot=list.indexOf(root);
+        int indexp=list.indexOf(p);
+        int indexq=list.indexOf(q);
+        int size=list.size();
+
+        while (indexroot<size&&indexp<size&&indexq<size){
+            if (indexp<indexroot&&indexq<indexroot){
+                list=list.subList(0,indexroot);
+                root=root.left;
+
+            }else if (indexp>indexroot&&indexq>indexroot){
+                list=list.subList(indexroot,size);
+                root=root.right;
+            }else {
+                return root;
+            }
+
+            indexroot=list.indexOf(root);
+            indexp=list.indexOf(p);
+            indexq=list.indexOf(q);
+            size=list.size();
+
+        }
+
+        return null;
+    }
+
+    private List<TreeNode> inorderTraversal1(TreeNode root) {
+        List<TreeNode> list=new ArrayList<>();
+
+        if (root!=null){
+            if (root.left!=null)
+                list.addAll(inorderTraversal1(root.left));
+            list.add(root);
+            if (root.right!=null)
+                list.addAll(inorderTraversal1(root.right));
+        }
+
+        return list;
+    }
+
+    /**
+     * 二叉树的最近公共祖先
+     * Best版本(leetcode)
+     *
+     * @param root 根节点
+     * @param p 目标节点 p
+     * @param q 目标节点 q
+     * @return
+     */
+    public TreeNode lowestCommonAncestor1(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q){
+            return root;
+        }
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if (left != null && right != null){
+            return root;
+        }
+        return left != null ? left : right;
     }
 
 }
