@@ -2,6 +2,7 @@ package BinaryTreeDemo;
 
 import sun.nio.cs.ext.MacArabic;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,11 +14,11 @@ public class Solution {
     public static void main(String[] args) {
         TreeNode root=new TreeNode(1);
         root.left=new TreeNode(2);
-        root.right=new TreeNode(3);
+//        root.right=new TreeNode(3);
         root.left.left=new TreeNode(4);
         root.left.right=new TreeNode(5);
-        root.right.left=new TreeNode(6);
-        root.right.right=new TreeNode(7);
+//        root.right.left=new TreeNode(6);
+//        root.right.right=new TreeNode(7);
 
         Solution solution=new Solution();
         List<Integer> list;
@@ -75,8 +76,18 @@ public class Solution {
         TreeNode a=solution.lowestCommonAncestor(root,root.left,root.left.right);
         System.out.println(a.val);
 
+        TreeNode q=null;
+        List<Object> list1=new ArrayList<>();
+        list1.add(q);
+        list1.add(root.val);
+        System.out.println(list1.toString());
 
+        String serialize=solution.serialize(root);
+        System.out.println(serialize);
+        serialize=solution.serialize(solution.deserialize(serialize));
+        System.out.println(serialize);
 
+        
     }
 
     //前序遍历
@@ -240,7 +251,6 @@ public class Solution {
     public boolean isSymmetricBest(TreeNode root) {
         return isEqual(root, root);
     }
-
     private boolean isEqual(TreeNode node, TreeNode another) {
         if (node == null && another == null) {
             return true;
@@ -288,7 +298,6 @@ public class Solution {
 
         return node;
     }
-
     private TreeNode build(List<Integer> inorder, List<Integer> postorder){
 
 
@@ -495,6 +504,95 @@ public class Solution {
             return root;
         }
         return left != null ? left : right;
+    }
+
+    /**
+     * 二叉树的序列化
+     * Encodes a tree to a single string.
+     *
+     * @param root
+     * @return
+     */
+    public String serialize(TreeNode root) {
+        if (root==null)
+            return "[null]";
+
+        List<Object> list=new ArrayList<>();
+        list.add(root.val);
+
+        Queue<TreeNode> queue=new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int num = queue.size();
+            for (int i = 0; i < num; i++) {
+                TreeNode now = queue.poll();
+
+                if (now.left != null){
+                    queue.add(now.left);
+                    list.add(now.left.val);
+                }else {
+                    list.add(null);
+                }
+
+                if (now.right != null){
+                    queue.add(now.right);
+                    list.add(now.right.val);
+                }else {
+                    list.add(null);
+                }
+            }
+        }
+
+        return list.toString();
+    }
+
+    /**
+     * 二叉树的反序列化
+     * Decodes your encoded data to tree.
+     *
+     * @param data
+     * @return
+     */
+    public TreeNode deserialize(String data) {
+        if (data=="[null]")
+            return null;
+
+        data=data.replace("[","");
+        data=data.replace("]","");
+        List<String> data_list= Arrays.asList(data.split(", "));
+        List<String> list=new ArrayList(data_list);
+
+        TreeNode root=new TreeNode(Integer.parseInt(list.get(0)));
+        list.remove(0);
+        Queue<TreeNode> queue=new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int num = queue.size();
+            for (int i = 0; i < num; i++) {
+                TreeNode now = queue.poll();
+
+                if (list.get(0).equals("null")){
+                    now.left=null;
+                }else {
+                    now.left=new TreeNode(Integer.parseInt(list.get(0)));
+                    queue.add(now.left);
+                }
+                list.remove(0);
+
+                if (list.get(0).equals("null")){
+                    now.right=null;
+                }else {
+                    now.right=new TreeNode(Integer.parseInt(list.get(0)));
+                    queue.add(now.right);
+                }
+                list.remove(0);
+
+            }
+        }
+
+        return root;
     }
 
 }
