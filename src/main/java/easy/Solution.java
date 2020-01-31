@@ -19,6 +19,12 @@ public class Solution {
 
         System.out.println(solution.isPalindrome(121));
 
+        System.out.println(solution.romanToInt("MCMXCIV"));
+
+        String[] strings={"asdzxc","asdfqwe","asdrew"};
+        System.out.println(solution.longestCommonPrefix(strings));
+        System.out.println(strings[0].indexOf("asdfg"));
+
     }
 
     /**
@@ -140,10 +146,137 @@ public class Solution {
         return temp==x;
     }
 
+    /**
+     * 13. 罗马数字转整数
+     *
+     * 罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
+     *
+     *字符    I   V    X    L     C    D    M
+     *
+     *数值    1   5   10   50   100  500  1000
+     *
+     * 通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，
+     * 例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。
+     * 同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：
+     *
+     * I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。
+     * X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。 
+     * C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。
+     * 给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
+     *
+     * 示例 1:
+     * 输入: "III"
+     * 输出: 3
+     *
+     * 示例 2:
+     * 输入: "IV"
+     * 输出: 4
+     *
+     * 示例 3:
+     * 输入: "MCMXCIV"
+     * 输出: 1994
+     * 解释: M = 1000, CM = 900, XC = 90, IV = 4.
+     *
+     * @param s
+     * @return
+     */
     public int romanToInt(String s) {
-        int res=0;
+        Map<String,Integer> map=new HashMap<>();
+        map.put("I",1);
+        map.put("V",5);
+        map.put("IV",4);
+        map.put("X",10);
+        map.put("IX",9);
+        map.put("L",50);
+        map.put("XL",40);
+        map.put("C",100);
+        map.put("XC",90);
+        map.put("D",500);
+        map.put("CD",400);
+        map.put("M",1000);
+        map.put("CM",900);
 
-        return res;
+        int ans=0;
+
+        for (int i=0;i<s.length();i++){
+            if (i+1<s.length()&&map.containsKey(s.substring(i,i+2))){
+                ans+=map.get(s.substring(i,i+2));
+                i++;
+            }else {
+                ans+=map.get(s.substring(i,i+1));
+            }
+        }
+
+        if (ans<1||ans>3999)
+            throw new IllegalArgumentException("Input mast between 1 and 3999!!!");
+
+        return ans;
     }
+
+    /**
+     * 14. 最长公共前缀
+     *
+     * 编写一个函数来查找字符串数组中的最长公共前缀。
+     * 如果不存在公共前缀，返回空字符串 ""。
+     *
+     * 示例 1:
+     * 输入: ["flower","flow","flight"]
+     * 输出: "fl"
+     *
+     * 示例 2:
+     * 输入: ["dog","racecar","car"]
+     * 输出: ""
+     *
+     * 说明:
+     * 所有输入只包含小写字母 a-z 。
+     *
+     * @param strs
+     * @return
+     */
+    //算法一：水平扫描法
+    public String longestCommonPrefix(String[] strs) {
+        if (strs.length == 0) return "";
+        String prefix = strs[0];
+        for (int i = 1; i < strs.length; i++)
+            while (strs[i].indexOf(prefix) != 0) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                if (prefix.isEmpty()) return "";
+            }
+        return prefix;
+    }
+    //算法二：水平扫描
+    public String longestCommonPrefix1(String[] strs) {
+        if (strs==null||strs.length == 0) return "";
+        for (int i=0;i<strs[0].length();i++){
+            char c=strs[0].charAt(i);
+            for (int j=1;j<strs.length;j++){
+                if (i==strs[j].length()||c!=strs[j].charAt(i))
+                    return strs[0].substring(0,i);
+            }
+        }
+        return strs[0];
+    }
+    //算法三：分治
+    public String longestCommonPrefix3(String[] strs){
+        if (strs==null||strs.length == 0) return "";
+        return longestCommonPrefix3(strs,0,strs.length-1);
+    }
+    private String longestCommonPrefix3(String[] strs,int x,int y){
+        if (x==y)
+            return strs[x];
+        int min=(x+y)/2;
+        String left=longestCommonPrefix3(strs,x,min);
+        String right=longestCommonPrefix3(strs,min+1,y);
+        return longestCommonPrefix3(left,right);
+    }
+    private String longestCommonPrefix3(String left,String right){
+        int min=Math.min(left.length(),right.length());
+        for (int i=0;i<min;i++){
+            if (left.charAt(i)!=right.charAt(i))
+                return left.substring(0,i);
+        }
+        return left.substring(0,min);
+    }
+
 
 }
