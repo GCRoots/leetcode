@@ -2,6 +2,7 @@ package easy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * @author shipengfei
@@ -22,8 +23,22 @@ public class Solution {
         System.out.println(solution.romanToInt("MCMXCIV"));
 
         String[] strings={"asdzxc","asdfqwe","asdrew"};
-        System.out.println(solution.longestCommonPrefix(strings));
+        System.out.println(solution.longestCommonPrefix4(strings));
         System.out.println(strings[0].indexOf("asdfg"));
+
+        System.out.println(solution.isValid("))"));
+
+        ListNode l1=new ListNode(1);
+        l1.next=new ListNode(3);
+        l1.next.next=new ListNode(5);
+        ListNode l2=new ListNode(2);
+        l2.next=new ListNode(4);
+        l2.next.next=new ListNode(8);
+        ListNode l=solution.mergeTwoLists(l1,l2);
+        while (l!=null){
+            System.out.print(l.val+" -> ");
+            l=l.next;
+        }
 
     }
 
@@ -277,6 +292,170 @@ public class Solution {
         }
         return left.substring(0,min);
     }
+    //算法四：二分查找法
+    public String longestCommonPrefix4(String[] strs){
+        if (strs==null||strs.length == 0) return "";
+        int min=Integer.MAX_VALUE;
+        for (String str:strs){
+            min=Math.min(min,str.length());
+        }
+        int low=0;
+        int high=min;
+        while (low<=high){
+            int mid=(low+high)/2;
+            if (isCommonPrefix4(strs,mid))
+                low=mid+1;
+            else
+                high=mid-1;
+        }
+        return strs[0].substring(0, high);
+    }
+    private boolean isCommonPrefix4(String[] strs,int length){
+        String str=strs[0].substring(0,length);
+        for (int i=0;i<strs.length;i++){
+            if (!strs[i].startsWith(str))
+                return false;
+        }
+        return true;
+    }
 
+    /**
+     * 20. 有效的括号
+     *
+     * 改了好几次，次次都带有一些莫名其妙的错误，代码看起来繁琐无比
+     *
+     *给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+     *
+     * 有效字符串需满足：
+     *
+     * 左括号必须用相同类型的右括号闭合。
+     * 左括号必须以正确的顺序闭合。
+     * 注意空字符串可被认为是有效字符串。
+     *
+     * 示例 1:
+     * 输入: "()"
+     * 输出: true
+     *
+     * 示例 2:
+     * 输入: "([)]"
+     * 输出: false
+     *
+     * @param s
+     * @return
+     */
+    public boolean isValid(String s) {
+        if (s==null || s.equals(""))
+            return true;
+        if (s.length()%2==1)
+            return false;
 
+        Stack<String> stack=new Stack<>();
+        for (int i=0;i<s.length();i++){
+            String str=s.substring(i, i + 1);
+            if (str.equals("(") || str.equals("[") || str.equals("{"))
+                stack.push(str);
+            else{
+                if (stack.isEmpty())
+                    return false;
+                String pop=stack.pop();
+                System.out.println(pop);
+                if (str.equals(")"))
+                    if (!pop.equals("("))
+                        return false;
+                if (str.equals("]"))
+                    if (!pop.equals("["))
+                        return false;
+                if (str.equals("}"))
+                    if (!pop.equals("{"))
+                        return false;
+            }
+        }
+        return stack.isEmpty();
+    }
+    public boolean isValid1(String s){
+        Map<Character,Character> map=new HashMap<>();
+        map.put(')','(');
+        map.put(']','[');
+        map.put('}','{');
+
+        Stack<Character> stack=new Stack<>();
+
+        for (int i=0;i<s.length();i++){
+            char ch=s.charAt(i);
+
+            if (map.containsKey(ch)){
+                char top=stack.isEmpty()?'#':stack.pop();
+                if (map.get(ch)!=top)
+                    return false;
+            }else {
+                stack.push(ch);
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    /**
+     * 21. 合并两个有序链表
+     *
+     * 将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+     *
+     * 示例：
+     * 输入：1->2->4, 1->3->4
+     * 输出：1->1->2->3->4->4
+     *
+     * @param l1
+     * @param l2
+     * @return
+     */
+    //迭代
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode node=new ListNode(0);
+        ListNode root=node;
+        while (l1!=null&&l2!=null){
+            if (l1.val<l2.val){
+                node.next=new ListNode(l1.val);
+                l1=l1.next;
+            }else {
+                node.next=new ListNode(l2.val);
+                l2=l2.next;
+            }
+            node=node.next;
+        }
+        node.next=l1!=null?l1:l2;
+
+        return root.next;
+    }
+    //递归
+    public ListNode mergeTwoLists2(ListNode l1, ListNode l2) {
+        if (l1==null)
+            return l2;
+        else if (l2==null)
+            return l1;
+        else if (l1.val<=l2.val){
+            l1.next=mergeTwoLists(l1.next,l2);
+            return l1;
+        }else {
+            l2.next=mergeTwoLists(l1,l2.next);
+            return l2;
+        }
+    }
+
+    /**
+     * 26. 删除排序数组中的重复项
+     *
+     * 给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
+     * 不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
+     *
+     * 示例 1:
+     * 给定数组 nums = [1,1,2],
+     * 函数应该返回新的长度 2, 并且原数组 nums 的前两个元素被修改为 1, 2。
+     * 你不需要考虑数组中超出新长度后面的元素。
+     *
+     * @param nums
+     * @return
+     */
+    public int removeDuplicates(int[] nums) {
+
+        return 0;
+    }
 }
