@@ -52,6 +52,13 @@ public class Solution {
         System.out.println(solution.removeElement(num1,2));
         System.out.println(Arrays.toString(num1));
 
+        System.out.println(solution.strStr("",""));
+
+        System.out.println(solution.searchInsert(new int[]{1, 2, 3, 4, 5},2));
+
+        System.out.println(solution.countAndSay(30));
+
+
     }
 
     /**
@@ -533,6 +540,120 @@ public class Solution {
             }
         }
         return n;
+    }
+
+    /**
+     * 28. 实现 strStr()
+     *
+     * 给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中
+     * 找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+     *
+     * 示例 1:    输入: haystack = "hello", needle = "ll"
+     *           输出: 2
+     * 示例 2:    输入: haystack = "aaaaa", needle = "bba"
+     *           输出: -1
+     *
+     * 说明:
+     * 当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+     * 对于本题而言，当 needle 是空字符串时我们应当返回 0 。
+     * 这与C语言的 strstr() 以及 Java的 indexOf() 定义相符。
+     *
+     * @param haystack
+     * @param needle
+     * @return
+     */
+    public int strStr(String haystack, String needle) {
+//        if (haystack.equals("") && needle.equals(""))
+//            return 0;
+        int j=0;
+        int len=needle.length();
+        while (j<haystack.length()-len+1){
+            if (haystack.substring(j,j+len).equals(needle)){
+                return j;
+            }
+            j++;
+        }
+        return -1;
+    }
+
+    /**
+     * 35. 搜索插入位置
+     *
+     * 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。
+     * 如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+     *
+     * 你可以假设数组中无重复元素。
+     *
+     * 示例 1:    输入: [1,3,5,6], 5
+     *           输出: 2
+     * 示例 2:    输入: [1,3,5,6], 2
+     *           输出: 1
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int searchInsert(int[] nums, int target) {
+        for (int i=0;i<nums.length;i++){
+            if (target<=nums[i])
+                return i;
+        }
+        return nums.length;
+    }
+
+    /**
+     * 38. 外观数列
+     *
+     * 「外观数列」是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。前五项如下：
+     *
+     * 1.     1
+     * 2.     11
+     * 3.     21
+     * 4.     1211
+     * 5.     111221
+     * 1 被读作  "one 1"  ("一个一") , 即 11。
+     * 11 被读作 "two 1s" ("两个一"）, 即 21。
+     * 21 被读作 "one 2",  "one 1" （"一个二" ,  "一个一") , 即 1211。
+     *
+     * 给定一个正整数 n（1 ≤ n ≤ 30），输出外观数列的第 n 项。
+     *
+     * 注意：整数序列中的每一项将表示为一个字符串。
+     *
+     *  
+     *
+     * 示例 1:    输入: 1
+     *           输出: "1"
+     *           解释：这是一个基本样例。
+     * 示例 2:    输入: 4
+     *           输出: "1211"
+     *           解释：当 n = 3 时，序列是 "21"，
+     *           其中我们有 "2" 和 "1" 两组，"2" 可以读作 "12"，
+     *           也就是出现频次 = 1 而 值 = 2；类似 "1" 可以读作 "11"。
+     *           所以答案是 "12" 和 "11" 组合在一起，也就是 "1211"。
+     *
+     * @return
+     */
+    public String countAndSay(int n) {
+        String s="1";
+        while (n>1){
+            s=countAndSayHelper(s);
+            n--;
+        }
+        return s;
+    }
+    public String countAndSayHelper(String s) {
+        String ret = "";
+        int count = 1;
+        s += "#";
+        for (int i = 0; i < s.length() - 1; i++) {
+            if (s.charAt(i) == s.charAt(i + 1)) {
+                count++;
+            } else {
+                ret = ret + count + s.charAt(i);
+                count = 1;
+            }
+        }
+        return ret;
     }
 
 }
