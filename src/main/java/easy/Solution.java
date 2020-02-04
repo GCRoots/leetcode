@@ -1,9 +1,7 @@
 package easy;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author shipengfei
@@ -58,6 +56,15 @@ public class Solution {
 
         System.out.println(solution.countAndSay(30));
 
+        System.out.println(solution.maxSubArray1(new int[]{-2, 1, -3, 4, -1, 2, 1, -5, 4}));
+
+        System.out.println(solution.lengthOfLastWord("a"));
+
+        System.out.println(Arrays.toString(solution.plusOne(new int[]{9,9,9})));
+
+        System.out.println(solution.addBinary("11","1001"));
+
+        System.out.println(solution.titleToNumber("BA"));
 
     }
 
@@ -654,6 +661,241 @@ public class Solution {
             }
         }
         return ret;
+    }
+
+    /**
+     * 53. 最大子序和
+     *
+     * 给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+     *
+     * 示例:  输入: [-2,1,-3,4,-1,2,1,-5,4],
+     *       输出: 6
+     *       解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+     *
+     * @param nums
+     * @return
+     */
+    //超出时间限制 不可取
+    public int maxSubArray(int[] nums) {
+        int max=0;
+        for (int num:nums)
+            max+=num;
+        return maxSubArrayHelper(Arrays.stream(nums).boxed().collect(Collectors.toList()),max);
+    }
+    public int maxSubArrayHelper(List<Integer> nums,int max) {
+        if (nums.size()==1)
+            return nums.get(0);
+
+        int left=maxSubArrayHelper(nums.subList(0,nums.size()-1),max-nums.get(nums.size()-1));
+        int right=maxSubArrayHelper(nums.subList(1,nums.size()),max-nums.get(0));
+
+        return Integer.max(max,Integer.max(left,right));
+    }
+    //贪心算法
+    public int maxSubArray1(int[] nums){
+        int n = nums.length;
+        int currSum = nums[0], maxSum = nums[0];
+
+        for(int i = 1; i < n; ++i) {
+            currSum = Math.max(nums[i], currSum + nums[i]);
+            maxSum = Math.max(maxSum, currSum);
+        }
+        return maxSum;
+    }
+    public int maxSubArray2(int[] nums){
+//        int[] a = new int[nums.length];
+//        a[0] = nums[0];
+        int max = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            nums[i] = Math.max(nums[i - 1] + nums[i],nums[i]) ;
+            max = Math.max(nums[i], max);
+        }
+        return max;
+    }
+
+    /**
+     * 58. 最后一个单词的长度
+     *
+     * 给定一个仅包含大小写字母和空格 ' ' 的字符串 s，返回其最后一个单词的长度。
+     * 如果字符串从左向右滚动显示，那么最后一个单词就是最后出现的单词。
+     * 如果不存在最后一个单词，请返回 0 。
+     * 说明：一个单词是指仅由字母组成、不包含任何空格的 最大子字符串。
+     *
+     * 示例:  输入: "Hello World"
+     *       输出: 5
+     *
+     * @param s
+     * @return
+     */
+    public int lengthOfLastWord(String s) {
+        if (s.length()==0) return 0;
+        int length=0;
+        for (int i=s.length()-1;i>=0;i--){
+            if (s.charAt(i)==' '){
+                if (length==0) continue;
+                break;
+            }
+            length++;
+        }
+
+        return length;
+    }
+
+    /**
+     * 66. 加一
+     *
+     * 给定一个由整数组成的非空数组所表示的非负整数，在该数的基础上加一。
+     * 最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+     * 你可以假设除了整数 0 之外，这个整数不会以零开头。
+     *
+     * 示例:  输入: [1,2,3]
+     *       输出: [1,2,4]
+     *       解释: 输入数组表示数字 123。
+     *
+     * @param digits
+     * @return
+     */
+    public int[] plusOne(int[] digits) {
+        int len = digits.length;
+        while (len > 0) {
+            if (digits[len - 1] == 9) {
+                digits[len - 1] = 0;
+                len--;
+            } else {
+                digits[len - 1] += 1;
+                return digits;
+            }
+        }
+        int[] r = new int[digits.length + 1];
+        r[0] = 1;
+        return r;
+    }
+
+    /**
+     * 67. 二进制求和
+     *
+     * 给定两个二进制字符串，返回他们的和（用二进制表示）。
+     * 输入为非空字符串且只包含数字 1 和 0。
+     *
+     * 示例:  输入: a = "1010", b = "1011"
+     *       输出: "10101"
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public String addBinary(String a, String b) {
+        if (a.equals("")) return b;
+        if (b.equals("")) return a;
+
+        int lenA=a.length()-1;
+        int lenB=b.length()-1;
+        int len=Integer.max(lenA,lenB);
+
+        String ans= "";
+        String temp="0";
+
+        while (len>=0){
+            if (lenA>=0&&lenB>=0){
+                if (a.charAt(lenA)=='1'&&b.charAt(lenB)=='1'){
+                    if (temp.equals("0")){
+                        ans="0"+ans;
+                    }else {
+                        ans="1"+ans;
+                    }
+                    temp="1";
+                }else if (a.charAt(lenA)=='1'&&b.charAt(lenB)=='0'||
+                        a.charAt(lenA)=='0'&&b.charAt(lenB)=='1'){
+                    if (temp.equals("0")){
+                        ans="1"+ans;
+                    }else {
+                        ans="0"+ans;
+                    }
+                }else if (a.charAt(lenA)=='0'&&b.charAt(lenB)=='0'){
+                    if (temp.equals("0")){
+                        ans="0"+ans;
+                    }else {
+                        ans="1"+ans;
+                    }
+                    temp="0";
+                }
+
+                lenA--;
+                lenB--;
+            }else if (lenA>=0){
+                if (a.charAt(lenA)=='0'){
+                    if (temp.equals("0")){
+                        ans="0"+ans;
+                    }else {
+                        ans="1"+ans;
+                    }
+                    temp="0";
+                }else {
+                    if (temp.equals("0")){
+                        ans="1"+ans;
+                    }else {
+                        ans="0"+ans;
+                    }
+                }
+                lenA--;
+            }else {
+                if (b.charAt(lenB)=='0'){
+                    if (temp.equals("0")){
+                        ans="0"+ans;
+                    }else {
+                        ans="1"+ans;
+                    }
+                    temp="0";
+                }else {
+                    if (temp.equals("0")){
+                        ans="1"+ans;
+                    }else {
+                        ans="0"+ans;
+                    }
+                }
+                lenB--;
+            }
+            len--;
+        }
+        return temp.equals("1")?"1"+ans:ans;
+    }
+
+    public int mySqrt(int x) {
+        if (x<=0) return 0;
+
+
+        return 0;
+    }
+
+    /**
+     * 171. Excel表列序号
+     * 给定一个Excel表格中的列名称，返回其相应的列序号。
+     *
+     * 例如:   A -> 1
+     *        B -> 2
+     *        C -> 3
+     *        ...
+     *        Z -> 26
+     *        AA -> 27
+     *        AB -> 28
+     *        ...
+     *
+     * 示例 1:    输入: "A"
+     *           输出: 1
+     *
+     * 示例 2:    输入: "AB"
+     *           输出: 28
+
+     * @param s
+     * @return
+     */
+    public int titleToNumber(String s) {
+        int ans=0;
+        for (int len=s.length()-1;len>=0;len--){
+            ans+=Math.pow(26,len)+s.charAt(len)-65;
+        }
+
+        return ans;
     }
 
 }
