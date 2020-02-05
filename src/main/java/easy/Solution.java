@@ -54,7 +54,7 @@ public class Solution {
 
         System.out.println(solution.searchInsert(new int[]{1, 2, 3, 4, 5},2));
 
-        System.out.println(solution.countAndSay(30));
+        System.out.println(solution.countAndSay(3));
 
         System.out.println(solution.maxSubArray1(new int[]{-2, 1, -3, 4, -1, 2, 1, -5, 4}));
 
@@ -64,7 +64,15 @@ public class Solution {
 
         System.out.println(solution.addBinary("11","1001"));
 
-        System.out.println(solution.titleToNumber("BA"));
+        System.out.println(solution.titleToNumber("AB"));
+
+        System.out.println(solution.mySqrt(32));
+
+        System.out.println(solution.climbStairs(5));
+
+        int[] nums1={4,5,6,0,0,0};
+        solution.merge1(nums1,3,new int[]{1,2,3},3);
+        System.out.println(Arrays.toString(nums1));
 
     }
 
@@ -860,12 +868,150 @@ public class Solution {
         return temp.equals("1")?"1"+ans:ans;
     }
 
+    /**
+     * 69. x 的平方根
+     *
+     * 实现 int sqrt(int x) 函数。
+     * 计算并返回 x 的平方根，其中 x 是非负整数。
+     * 由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+     *
+     * 示例 1:    输入: 4
+     *           输出: 2
+     *
+     * 示例 2:    输入: 8
+     *           输出: 2
+     *           说明: 8 的平方根是 2.82842...,
+     *           由于返回类型是整数，小数部分将被舍去。
+     *
+     * @param x
+     * @return
+     */
     public int mySqrt(int x) {
         if (x<=0) return 0;
 
+        int mid=0;
+        int low=1;
+        int high=x/2+1;
 
-        return 0;
+        while (low<=high){
+            mid=(low+high)/2;
+            if (mid<=x/mid&&mid+1>x/(mid+1)) return mid;
+            if (mid>x/mid)
+                high=mid-1;
+            else low=mid+1;
+        }
+
+        return mid;
     }
+
+    /**
+     * 70. 爬楼梯 斐波那契数列
+     *
+     * 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+     * 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+     * 注意：给定 n 是一个正整数。
+     *
+     * 示例 1：    输入： 2
+     *           输出： 2
+     *           解释： 有两种方法可以爬到楼顶。
+     *           1.  1 阶 + 1 阶
+     *           2.  2 阶
+     *
+     * 示例 2：    输入： 3
+     *           输出： 3
+     *           解释： 有三种方法可以爬到楼顶。
+     *           1.  1 阶 + 1 阶 + 1 阶
+     *           2.  1 阶 + 2 阶
+     *           3.  2 阶 + 1 阶
+     *
+     *
+     * @param n
+     * @return
+     */
+    public int climbStairs(int n) {
+        int[] nums=new int[n+1];
+        nums[0]=1;
+        nums[1]=1;
+        for (int i=2;i<n+1;i++){
+            nums[i]=nums[i-1]+nums[i-2];
+        }
+        return nums[n];
+    }
+
+    /**
+     * 83. 删除排序链表中的重复元素
+     *
+     * 给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
+     *
+     * 示例 1:    输入: 1->1->2
+     *           输出: 1->2
+     *
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head==null) return null;
+        ListNode node=head;
+
+        while (node!=null&&node.next!=null){
+            if (node.val==node.next.val)
+                node.next=node.next.next;
+            else node=node.next;
+        }
+        return head;
+    }
+
+    /**
+     * 88. 合并两个有序数组
+     *
+     * 给定两个有序整数数组 nums1 和 nums2，将 nums2 合并到 nums1 中，使得 num1 成为一个有序数组。
+     *
+     * 说明:
+     * 初始化 nums1 和 nums2 的元素数量分别为 m 和 n。
+     * 你可以假设 nums1 有足够的空间（空间大小大于或等于 m + n）来保存 nums2 中的元素。
+     *
+     * 示例:
+     * 输入:  nums1 = [1,2,3,0,0,0], m = 3
+     *       nums2 = [2,5,6],       n = 3
+     * 输出:  [1,2,2,3,5,6]
+     *
+     * @param nums1
+     * @param m
+     * @param nums2
+     * @param n
+     */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int i=0;
+        int j=0;
+        int zero=m;
+        while (i<m+j&&j<n){
+            if (nums1[i]>nums2[j]){
+                while (zero>i)
+                    nums1[zero]=nums1[(zero--)-1];
+                zero=m+j+1;
+                nums1[i]=nums2[j];
+                j++;
+            }
+            i++;
+        }
+        while (j<n){
+            nums1[i++]=nums2[j++];
+        }
+    }
+    //双指针 从后往前 个人觉得思路贼cool
+    public void merge1(int[] nums1, int m, int[] nums2, int n){
+        int i=m-1;
+        int j=n-1;
+        int end=m+n-1;
+        while (i>=0&&j>=0){
+            nums1[end--]=nums1[i]>nums2[j]?nums1[i--]:nums2[j--];
+        }
+        System.arraycopy(nums2,0,nums1,0,j+1);
+    }
+
+
+
+
 
     /**
      * 171. Excel表列序号
@@ -891,8 +1037,9 @@ public class Solution {
      */
     public int titleToNumber(String s) {
         int ans=0;
-        for (int len=s.length()-1;len>=0;len--){
-            ans+=Math.pow(26,len)+s.charAt(len)-65;
+        int len=s.length()-1;
+        for (int i=0;i<s.length();len--,i++){
+            ans+=Math.pow(26,i)*(s.charAt(len)-64);
         }
 
         return ans;
