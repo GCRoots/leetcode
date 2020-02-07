@@ -8,11 +8,11 @@ import java.util.*;
  */
 public class Solution {
     public static void main(String[] args) {
-        TreeNode root=new TreeNode(1);
+        TreeNode root=new TreeNode(4);
         root.left=new TreeNode(2);
-        root.right=new TreeNode(3);
-        root.left.left=new TreeNode(4);
-        root.left.right=new TreeNode(5);
+        root.right=new TreeNode(7);
+        root.left.left=new TreeNode(1);
+        root.left.right=new TreeNode(3);
         root.right.left=new TreeNode(6);
         root.right.right=new TreeNode(7);
 
@@ -20,6 +20,8 @@ public class Solution {
 
         boolean isValidBST=solution.isValidBST(root);
         System.out.println(isValidBST);
+
+        System.out.println(solution.searchBST(root,2));
     }
 
     //前序遍历
@@ -51,7 +53,6 @@ public class Solution {
 
         return list;
     }
-
     //中序遍历 栈
     public List < Integer > inorderTraversalStack(TreeNode root) {
         List <Integer> res = new ArrayList<>();
@@ -109,7 +110,6 @@ public class Solution {
         list.sort(Comparator.comparingInt(Integer::intValue));
         return list.equals(sort);
     }
-
     public boolean isValidBSTStack(TreeNode root){
         if (root == null)
             return true;
@@ -129,5 +129,68 @@ public class Solution {
         return true;
     }
 
+    // 在二叉搜索树中实现搜索操作
+    public TreeNode searchBST(TreeNode root, int val) {
+        if (root==null) return null;
+        if (root.val==val) return root;
+        return root.val>val?searchBST(root.left,val):searchBST(root.right,val);
+    }
+
+    // 173. 二叉搜索树迭代器
+    class BSTIterator {
+        private Queue<Integer> queue=new LinkedList<>();
+
+        //初始化BSTIterator
+        public BSTIterator(TreeNode root) {
+            Stack<TreeNode> stack=new Stack<>();
+            TreeNode curr=root;
+            while (curr!=null||!stack.isEmpty()){
+                while (curr!=null){
+                    stack.push(curr);
+                    curr=curr.left;
+                }
+                curr=stack.pop();
+                queue.add(curr.val);
+                curr=curr.right;
+            }
+        }
+
+        /** @return the next smallest number */
+        public int next() {
+            return queue.poll();
+        }
+
+        /** @return whether we have a next smallest number */
+        public boolean hasNext() {
+            return !queue.isEmpty();
+        }
+    }
+    class BSTIterator1 {
+        private Stack<TreeNode> stack;
+
+        public BSTIterator1(TreeNode root) {
+            this.stack=new Stack<>();
+            pushElement(root);
+        }
+        private void pushElement(TreeNode root){
+            while (root!=null){
+                stack.push(root);
+                root=root.left;
+            }
+        }
+
+        /** @return the next smallest number */
+        public int next() {
+            TreeNode node=stack.pop();
+            pushElement(node.right);
+            return node.val;
+        }
+
+        /** @return whether we have a next smallest number */
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+    }
 
 }
+
