@@ -1009,6 +1009,144 @@ public class Solution {
         System.arraycopy(nums2,0,nums1,0,j+1);
     }
 
+    /**
+     * 100. 相同的树
+     *
+     * 给定两个二叉树，编写一个函数来检验它们是否相同。
+     * 如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。
+     *
+     * 示例 1:
+     * 输入:       1         1
+     *           / \       / \
+     *          2   3     2   3
+     *
+     *         [1,2,3],   [1,2,3]
+     *
+     * 输出: true
+     *
+     * @param p
+     * @param q
+     * @return
+     */
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p==null&&q==null) return true;
+        if (q==null||p==null) return false;
+        if (p.val!=q.val) return false;
+        return isSameTree(p.left,q.left)&&isSameTree(p.right,q.right);
+    }
+
+    /**
+     * 101. 对称二叉树
+     *
+     * 给定一个二叉树，检查它是否是镜像对称的。
+     *
+     * 例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+     *
+     *     1
+     *    / \
+     *   2   2
+     *  / \ / \
+     * 3  4 4  3
+     *
+     * 但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+     *
+     *     1
+     *    / \
+     *   2   2
+     *    \   \
+     *    3    3
+     *
+     * @param root
+     * @return
+     */
+    public boolean isSymmetric(TreeNode root) {
+        return isEqual(root, root);
+    }
+    private boolean isEqual(TreeNode node, TreeNode another) {
+        if (node == null && another == null) return true;
+        if (node == null || another == null) return false;
+        return node.val == another.val && isEqual(node.left, another.right) && isEqual(node.right, another.left);
+    }
+
+    /**
+     * 104. 二叉树的最大深度
+     *
+     * 给定一个二叉树，找出其最大深度。
+     * 二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+     * 说明: 叶子节点是指没有子节点的节点。
+     *
+     * 示例：
+     * 给定二叉树 [3,9,20,null,null,15,7]，
+     *
+     *     3
+     *    / \
+     *   9  20
+     *     /  \
+     *    15   7
+     * 返回它的最大深度 3 。
+     *
+     * @param root
+     * @return
+     */
+    public int maxDepth(TreeNode root) {
+        return getMaxDepth(root, 0);
+    }
+    private int getMaxDepth(TreeNode node, int depth) {
+        if (node == null) return depth;
+        return Math.max(getMaxDepth(node.left, depth + 1), getMaxDepth(node.right, depth + 1));
+    }
+
+    /**
+     * 107. 二叉树的层次遍历 II
+     *
+     * 给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+     *
+     * 例如：
+     * 给定二叉树 [3,9,20,null,null,15,7],
+     *
+     *     3
+     *    / \
+     *   9  20
+     *     /  \
+     *    15   7
+     *
+     * 返回其自底向上的层次遍历为：
+     *
+     * [
+     *   [15,7],
+     *   [9,20],
+     *   [3]
+     * ]
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> lists=new ArrayList<>();
+
+
+        if (root!=null){
+            Queue<TreeNode> queue=new LinkedList<>();
+            queue.add(root);
+
+            while (!queue.isEmpty()){
+                List<Integer> list=new ArrayList<>();
+                int num=queue.size();
+                for (int i=0;i<num;i++){
+                    TreeNode now=queue.poll();
+                    list.add(now.val);
+
+                    if (now.left!=null)
+                        queue.add(now.left);
+                    if (now.right!=null)
+                        queue.add(now.right);
+                }
+                lists.add(0,list);
+            }
+        }
+        return lists;
+    }
+
 
 
 
@@ -1052,4 +1190,18 @@ public class Solution {
         return ans;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }
