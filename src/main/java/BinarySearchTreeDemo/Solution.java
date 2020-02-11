@@ -1,6 +1,7 @@
 package BinarySearchTreeDemo;
 
 import BinaryTreeDemo.Node;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.util.*;
 
@@ -35,6 +36,9 @@ public class Solution {
         KthLargest k=solution.new KthLargest(1,new int[]{-2});
         System.out.println(k.count);
         System.out.println(k.add(-3));
+
+        int[] nums={0,1,2,3,4,5,6,7};
+        System.out.println(Arrays.toString(Arrays.copyOfRange(nums, 0, 2)));
 
     }
 
@@ -391,7 +395,7 @@ public class Solution {
         }
     }
 
-    //二叉搜索树的最近公共祖先
+    // 二叉搜索树的最近公共祖先
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         int pval=p.val;
         int qval=q.val;
@@ -401,6 +405,64 @@ public class Solution {
         else if (pval<rval&&qval<rval) return lowestCommonAncestor(root.left,p,q);
         else return root;
     }
+
+    // 判断平衡二叉树 自顶向下的递归
+    public boolean isBalanced(TreeNode root) {
+        if (root==null) return true;
+        return Math.abs(isBalencedHelper(root.left)-isBalencedHelper(root.right))<2
+                &&isBalanced(root.left)&&isBalanced(root.right);
+    }
+    private int isBalencedHelper(TreeNode root){
+        if (root==null) return 0;
+        return 1+Math.max(isBalencedHelper(root.left),isBalencedHelper(root.right));
+    }
+
+    // 判断平衡二叉树 自底向上的递归
+    public boolean isBalancedUp(TreeNode root) {
+        return judgeBalanced(root).isBalanced;
+    }
+    private class TreeInfo{
+        int depth;
+        boolean isBalanced;
+
+        public TreeInfo(int depth, boolean isBalanced) {
+            this.depth = depth;
+            this.isBalanced = isBalanced;
+        }
+    }
+    private TreeInfo judgeBalanced(TreeNode root){
+        if (root==null)
+            return new TreeInfo(0,true);
+
+        TreeInfo left=judgeBalanced(root.left);
+        if (!left.isBalanced)
+            return new TreeInfo(-1,false);
+
+        TreeInfo right=judgeBalanced(root.right);
+        if (!right.isBalanced)
+            return new TreeInfo(-1,false);
+
+        if (Math.abs(left.depth-right.depth)>1)
+            return new TreeInfo(-1,false);
+
+        return new TreeInfo(Math.max(left.depth,right.depth)+1,true);
+    }
+
+    // 将有序数组转换为二叉搜索树
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums.length==0) return null;
+        return build(nums,0,nums.length-1);
+    }
+    private TreeNode build(int[] nums,int left,int right){
+        if (left>right) return null;
+
+        int mid=(left+right)/2;
+        TreeNode root=new TreeNode(nums[mid]);
+        root.left=build(nums,left,mid-1);
+        root.right=build(nums,mid+1,right);
+        return root;
+    }
+
 
 
 }
