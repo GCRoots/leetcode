@@ -1,5 +1,7 @@
 package easy;
 
+import sun.reflect.generics.tree.Tree;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,6 +75,16 @@ public class Solution {
         int[] nums1={4,5,6,0,0,0};
         solution.merge1(nums1,3,new int[]{1,2,3},3);
         System.out.println(Arrays.toString(nums1));
+
+        TreeNode min=new TreeNode(1);
+        min.left=new TreeNode(2);
+        System.out.println(solution.minDepth(min));
+
+        System.out.println(solution.generate(5));
+
+        System.out.println(solution.getRow(5));
+
+        System.out.println(solution.maxProfit(new int[]{7, 6, 4, 3, 1}));
 
     }
 
@@ -1147,14 +1159,244 @@ public class Solution {
         return lists;
     }
 
+    /**
+     * 110. 平衡二叉树
+     *
+     * 给定一个二叉树，判断它是否是高度平衡的二叉树。
+     *
+     * 本题中，一棵高度平衡二叉树定义为：
+     *
+     * 一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1。
+     *
+     * 示例 1:    给定二叉树 [3,9,20,null,null,15,7]
+     *
+     *                      3
+     *                     / \
+     *                    9  20
+     *                      /  \
+     *                     15   7
+     *                  返回 true 。
+     *
+     * 示例 2:    给定二叉树 [1,2,2,3,3,null,null,4,4]
+     *
+     *                     1
+     *                    / \
+     *                   2   2
+     *                  / \
+     *                 3   3
+     *                / \
+     *               4   4
+     *              返回 false 。
+     *
+     * @param root
+     * @return
+     */
+    public boolean isBalanced(TreeNode root) {
+        return judgeBalanced(root).isBalanced;
+    }
+    private class TreeInfo{
+        int depth;
+        boolean isBalanced;
 
+        public TreeInfo(int depth, boolean isBalanced) {
+            this.depth = depth;
+            this.isBalanced = isBalanced;
+        }
+    }
+    private TreeInfo judgeBalanced(TreeNode root){
+        if (root==null) return new TreeInfo(0,true);
 
+        TreeInfo left=judgeBalanced(root.left);
+        if (!left.isBalanced) return new TreeInfo(-1,false);
 
+        TreeInfo right=judgeBalanced(root.right);
+        if (!right.isBalanced) return new TreeInfo(-1,false);
 
+        if (Math.abs(left.depth-right.depth)>1) return new TreeInfo(-1,false);
 
+        return new TreeInfo(Math.max(left.depth,right.depth)+1,true);
+    }
 
+    /**
+     * 111. 二叉树的最小深度
+     *
+     * 给定一个二叉树，找出其最小深度。
+     * 最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+     * 说明: 叶子节点是指没有子节点的节点。
+     *
+     * 示例:
+     * 给定二叉树 [3,9,20,null,null,15,7],
+     *
+     *     3
+     *    / \
+     *   9  20
+     *     /  \
+     *    15   7
+     *
+     * 返回它的最小深度  2.
+     *
+     * @param root
+     * @return
+     */
+    public int minDepth(TreeNode root) {
+        if (root==null) return 0;
 
+        int min=Integer.MAX_VALUE;
+        if (root.left==null&&root.right==null) return 1;
+        if (root.left!=null) min=Math.min(minDepth(root.left),min);
+        if (root.right!=null) min=Math.min(minDepth(root.right),min);
 
+        return min+1;
+    }
+
+    /**
+     * 112. 路径总和
+     *
+     * 给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
+     * 说明: 叶子节点是指没有子节点的节点。
+     *
+     * 示例: 
+     * 给定如下二叉树，以及目标和 sum = 22，
+     *               5
+     *              / \
+     *             4   8
+     *            /   / \
+     *           11  13  4
+     *          /  \      \
+     *         7    2      1
+     * 返回 true, 因为存在目标和为 22 的根节点到叶子节点的路径 5->4->11->2。
+     *
+     * @param root
+     * @param sum
+     * @return
+     */
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root==null)
+            return false;
+
+        sum-=root.val;
+        if (root.left==null&&root.right==null)
+            return sum==0;
+
+        return hasPathSum(root.left,sum)||hasPathSum(root.right,sum);
+    }
+
+    /**
+     * 118. 杨辉三角
+     *
+     * 给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。
+     * 在杨辉三角中，每个数是它左上方和右上方的数的和。
+     *
+     * 示例:
+     *
+     * 输入: 5
+     * 输出:
+     * [
+     *      [1],
+     *     [1,1],
+     *    [1,2,1],
+     *   [1,3,3,1],
+     *  [1,4,6,4,1]
+     * ]
+     *
+     * @param numRows
+     * @return
+     */
+    public List<List<Integer>> generate(int numRows) {
+        List<List<Integer>> lists=new ArrayList<>();
+        if (numRows==0) return lists;
+
+        for (int i=0;i<numRows;i++){
+            List<Integer> list=new ArrayList<>();
+            list.add(1);
+            if (lists.size()==0) {
+                lists.add(list);
+                continue;
+            }
+            List<Integer> last=lists.get(i-1);
+            for (int j=1;j<last.size();j++){
+                list.add(last.get(j)+last.get(j-1));
+            }
+            list.add(1);
+            lists.add(list);
+        }
+
+        return lists;
+    }
+
+    /**
+     * 119. 杨辉三角 II
+     *
+     * 给定一个非负索引 k，其中 k ≤ 33，返回杨辉三角的第 k 行。
+     * 在杨辉三角中，每个数是它左上方和右上方的数的和。
+     *
+     * 示例:
+     * 输入: 3
+     * 输出: [1,3,3,1]
+     *
+     * @param rowIndex
+     * @return
+     */
+    public List<Integer> getRow(int rowIndex) {
+        List<Integer> list=new ArrayList<>();
+        list.add(1);
+        if (rowIndex==0) return list;
+
+        List<Integer> last;
+
+        for (int i=0;i<rowIndex;i++){
+            last=new ArrayList<>();
+            last.add(1);
+            for (int j=1;j<list.size();j++){
+                last.add(list.get(j-1)+list.get(j));
+            }
+            last.add(1);
+            list=last;
+        }
+
+        return list;
+    }
+
+    /**
+     * 121. 买卖股票的最佳时机
+     *
+     * 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+     * 如果你最多只允许完成一笔交易（即买入和卖出一支股票），设计一个算法来计算你所能获取的最大利润。
+     * 注意你不能在买入股票前卖出股票。
+     *
+     * 示例 1:
+     * 输入: [7,1,5,3,6,4]
+     * 输出: 5
+     * 解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     *      注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格。
+     *
+     * 示例 2:
+     * 输入: [7,6,4,3,1]
+     * 输出: 0
+     * 解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfit(int[] prices) {
+        if (prices.length==0) return 0;
+        int max=0;
+        for (int i=0;i<prices.length-1;i++){
+            for (int j=i+1;j<prices.length;j++){
+                max=Math.max(max,prices[j]-prices[i]);
+            }
+        }
+        return max;
+    }
+    public int maxProfit1(int[] prices) {
+        int max=0;
+        int min=Integer.MAX_VALUE;
+        for (int i=0;i<prices.length;i++){
+            if (prices[i]<min) min=prices[i];
+            else if (prices[i]-min>max) max=prices[i]-min;
+        }
+        return max;
+    }
 
 
 
