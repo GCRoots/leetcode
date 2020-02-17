@@ -86,6 +86,10 @@ public class Solution {
 
         System.out.println(solution.maxProfit(new int[]{7, 6, 4, 3, 1}));
 
+        System.out.println(solution.isPalindrome(".,"));
+
+        System.out.println(solution.singleNumber(new int[]{1,1,2,2,3}));
+
     }
 
     /**
@@ -1397,6 +1401,170 @@ public class Solution {
         }
         return max;
     }
+
+    /**
+     * 122. 买卖股票的最佳时机 II
+     *
+     * 给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+     * 设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。
+     *
+     * 注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+     *
+     * 示例 1:
+     * 输入: [7,1,5,3,6,4]
+     * 输出: 7
+     * 解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     *      随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+     *
+     * 示例 2:
+     * 输入: [1,2,3,4,5]
+     * 输出: 4
+     * 解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     *      注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
+     *      因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfit2(int[] prices) {
+        int profit=0;
+
+        for (int i=1;i<prices.length;i++){
+            if (prices[i]>prices[i-1]) {
+                profit+=prices[i]-prices[i-1];
+            }
+        }
+
+        return profit;
+    }
+
+
+    /**
+     * 125. 验证回文串
+     *
+     * 给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+     * 说明：本题中，我们将空字符串定义为有效的回文串。
+     *
+     * 示例 1:
+     * 输入: "A man, a plan, a canal: Panama"
+     * 输出: true
+     *
+     * 示例 2:
+     * 输入: "race a car"
+     * 输出: false
+     *
+     * @param s
+     * @return
+     */
+    public boolean isPalindrome(String s) {
+        if (s==null) return true;
+        s=s.toLowerCase();
+        int before=0;
+        int behind=s.length()-1;
+        while (before<behind){
+            if (!Character.isLetterOrDigit(s.charAt(before)))
+                before++;
+            else if (!Character.isLetterOrDigit(s.charAt(behind)))
+                behind--;
+            else if (s.charAt(before)!=s.charAt(behind))
+                return false;
+            else {
+                before++;
+                behind--;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * 136. 只出现一次的数字
+     *
+     * 给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现了三次。找出那个只出现了一次的元素。
+     *
+     * 说明：
+     *
+     * 你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
+     *
+     * 示例 1:
+     * 输入: [2,2,3,2]
+     * 输出: 3
+     *
+     * 示例 2:
+     * 输入: [0,1,0,1,0,1,99]
+     * 输出: 99
+     *
+     * @param nums
+     * @return
+     */
+    //哈希表
+    public int singleNumber(int[] nums) {
+        Map<Integer,Integer> map=new HashMap<>();
+        for (int num:nums){
+            Integer count=map.get(num);
+            count= count==null?1:++count;
+            map.put(num,count);
+        }
+        for (int key:map.keySet()){
+            if (map.get(key)==1)
+                return key;
+        }
+        return -1;
+    }
+    //异或
+    public int singleNumber1(int[] nums) {
+        int ans=nums[0];
+        for (int i=1;i<nums.length;i++)
+            ans^=nums[i];
+        return ans;
+    }
+
+    /**
+     * 141. 环形链表
+     *
+     * 给定一个链表，判断链表中是否有环。
+     *
+     * 为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。
+     * 如果 pos 是 -1，则在该链表中没有环。
+     *
+     * 示例：
+     * 输入：head = [3,2,0,-4], pos = 1
+     * 输出：true
+     * 解释：链表中有一个环，其尾部连接到第二个节点。
+     *
+     * @param head
+     * @return
+     */
+    //哈希表
+    public boolean hasCycle(ListNode head) {
+        if (head==null) return false;
+        Set<ListNode> set=new HashSet<>();
+        while (head!=null){
+            if (set.contains(head)) return true;
+            set.add(head);
+            head=head.next;
+        }
+        return false;
+    }
+    //双指针
+    public boolean hasCycle1(ListNode head){
+        if (head==null||head.next==null) return false;
+        ListNode slow=head;
+        ListNode fast=head.next;
+        while (slow!=fast){
+            if (fast==null||fast.next==null) return false;
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+        return true;
+    }
+
+
+
+
+
+
+
 
 
 
